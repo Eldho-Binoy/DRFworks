@@ -1,3 +1,4 @@
+from django.contrib.postgres import serializers
 from django.db.models import Model
 from django.shortcuts import render
 
@@ -19,6 +20,7 @@ from django.utils.decorators import method_decorator
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from app.serializers import EmployeeSerializer
+from rest_framework import status
 
 class EmployeeList(APIView):
     def get(self,request):
@@ -31,28 +33,7 @@ class EmployeeList(APIView):
         #send the serialized data into client side as json using Response()
         return Response(serializer_instance.data)
 
-#creating aa new employee record
-# @method_decorator(csrf_exempt,name="dispatch")
-# class EmployeeCreate(View):
-#     def post(self,request):
-#         form_data=request.body
-#
-#         data=loads(form_data)
-#         print(data)
-#         # e=data['empid']
-#         # n=data['name']
-#         # a=data['age']
-#         # g=data['gender']
-#         # s=data['salary']
-#         # d=data['designation']
-#         # j=data['joining_date']
-#
-#         #e=Employee.objects.create(empid=e,name=n,age=a,gender=g,salary=s,designation=d,joining_date=j)
-#         e=Employee.objects.create(**data)
-#         e.save()
-#
-#         return JsonResponse({'message':'created'})
-         #using drf
+
 class EmployeeCreate(APIView):
     def post(self,request):
 
@@ -69,74 +50,82 @@ class EmployeeCreate(APIView):
         else:
             return Response(serializer_instance.errors)
 
-#read a specific record
-class EmployeeDetail(View):
-    def get(self,request,i):
-        qs=Employee.objects.filter(id=i)
-        data=list(qs.values())
-        return JsonResponse(data,safe=False)
 
-#update a record fully
-@method_decorator(csrf_exempt,name="dispatch")
-class EmployeeUpdate(View):
+
+
+from django.shortcuts import get_object_or_404
+class EmployeeRetrieve(APIView):
+    def get(self,request,i): #i parameter recieves the id value cominf from client
+        #fetch id
+        # e=Employee.objects.get(id=i)
+        e=get_object_or_404(Employee,id=i)
+        #convertion
+        serializer_instance=EmployeeSerializer(e)
+        #returrn response
+        return Response(serializer_instance.data)
+
+
+
+
+class EmployeeUpdate(APIView):
     def put(self,request,i):
-        e=Employee.objects.get(id=i)
-        form_data=request.body
-        data=loads(form_data)
-        e.empid=data['empid']
-        e.name=data['name']
-        e.age=data['age']
-        e.gender=data['gender']
-        e.salary=data['salary']
-        e.designation=data['designation']
-        e.joining_date=data['joining_date']
 
-        e.save()
-        return JsonResponse({'message':'updated'})
+        #fetches the data coming from clientside
+        data=request.data
+        #reads the records from db table matching with id
+        e=get_object_or_404(Employee,id=i)
+        #calls the serializer class for deserialization
+        serializer_instance=EmployeeSerializer(isinstance=e,data=data)
 
-#partilaly update
-@method_decorator(csrf_exempt,name="dispatch")
-class EmployeePartialUpdate(View):
+        #after validation saves the respomse
+        if serializer_instance.is_valid():
+            serializer_instance.save()
+            return Response(serializer_instance.data,status=status.HTTP_201_CREATED)
+
+        #if is_valid() return False
+        else:
+            return Response(serializer_instance.errors,status=status.HTTP_400_BAD_REQUEST)
+
+
+
+class EmployeePartialUpdate(APIView):
     def patch(self,request,i):
-        e=Employee.objects.get(id=i)
-        form_data=request.body
 
-        data=loads(form_data)
-        print(data)
+        #fetches the data coming from clientside
+        data=request.data
+        #reads the records from db table matching with id
+        e=get_object_or_404(Employee,id=i)
+        #calls the serializer class for deserialization
+        serializer_instance=EmployeeSerializer(instance=e,data=data,partial=True)
 
-        if 'empid' in data:
-            e.empid=data['empid']
+        #after validation saves the respomse
+        if serializer_instance.is_valid():
+            serializer_instance.save()
+            return Response(serializer_instance.data)
 
-        if 'name' in data:
-            e.name=data['name']
+        #if is_valid() return False
+        else:
+            return Response(serializer_instance.errors,status=status.HTTP_400_BAD_REQUEST)
+#
+# #to delete
+# @method_decorator(csrf_exempt,name="dispatch")
+# class EmployeeDelete(View):
+#     def delete(self,request,i):
+#         #reads the record mathcing with the id from db tble
+#          s=Employee.objects.get(id=i)
+#
+#         # delete the record
+#          s.delete()
+#
+#         #send the response
+#          return JsonResponse({"message":"deleted successfully"})
 
-        if 'age' in data:
-            e.age=data['age']
-
-        if 'gender' in data:
-            e.gender=data['gender']
-
-        if 'salary' in data:
-            e.salary=data['salary']
-
-        if 'designation' in data:
-            e.designation=data['designation']
-
-        if 'joining_date' in data:
-            e.joining_date=data['joining_date']
-
-        e.save()
-        return JsonResponse({'message':'updated'})
-
-#to delete
-@method_decorator(csrf_exempt,name="dispatch")
-class EmployeeDelete(View):
+class EmployeeDelete(APIView):
     def delete(self,request,i):
-        #reads the record mathcing with the id from db tble
-         s=Employee.objects.get(id=i)
 
-        # delete the record
-         s.delete()
+        #reads the employee record from db table
+        e=Employee.objects.get(id=i)
 
-        #send the response
-         return JsonResponse({"message":"deleted successfully"})
+        e.delete()
+
+        return Response({"meseage":"deleted"})
