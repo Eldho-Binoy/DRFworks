@@ -5,3 +5,10 @@ class MovieSerializer(serializers.ModelSerializer):
         model=Movie
         fields="__all__"
         read_only_fields=['id']
+
+from django.contrib.auth.models import User
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=User
+        fields=['id','username','passwords','email','first_name','last_name']
+        read_only_fields=['id']

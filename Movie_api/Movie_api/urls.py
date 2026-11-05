@@ -26,4 +26,5 @@ urlpatterns = [
     # path('update/<int:i>',views.MovieUpdate.as_view()),
     # path('patch/<int:i>',views.MoviePatch.as_view()),
     # path('delete/<int:i>',views.MovieDelete.as_view()),
+    path("search",views.SearchAPIView.as_view()),
 ]

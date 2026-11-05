@@ -353,3 +353,5 @@ from rest_framework import viewsets
 class EmployeeView(viewsets.ModelViewSet):
     queryset=Employee.objects.all()
     serializer_class=EmployeeSerializer
+
+from rest_framework.filters import SearchFilter

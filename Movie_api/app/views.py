@@ -68,3 +68,19 @@ class MovieDelete(APIView):
         e=get_object_or_404(Movie,id=i)
         e.delete()
         return Response({"message":"deleted"})
+
+
+from django.db.models import Q
+class SearchAPIView(APIView):
+    def get(self,request):
+
+        data=request.query_params.get('search')
+
+        m=Movie.objects.filter(Q(title__icontains=data)|
+                               Q(director__icontains=data)|
+                               Q(language__icontains=data)|
+                               Q(year__icontains=data))
+
+        serializer_instance=MovieSerializer(m,many=True)
+
+        return Response(serializer_instance.data)
