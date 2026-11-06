@@ -1,12 +1,6 @@
-from app import serializers
-from rest_framework import serializers
-from app.models import Doctor
-from django.contrib.auth.models import User
 
-class DoctorSerializer(serializers.ModelSerializer):
-    class Meta: #for providing description about serializer class
-        model=Doctor
-        fields="__all__"
+from rest_framework import serializers
+from django.contrib.auth.models import User
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:

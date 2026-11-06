@@ -6,8 +6,8 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('app', '0003_alter_employee_empid_alter_employee_name_and_more'),
-        ('app', '0003_remove_employee_place_alter_employee_empid_and_more'),
+        ('doctor', '0003_alter_employee_empid_alter_employee_name_and_more'),
+        ('doctor', '0003_remove_employee_place_alter_employee_empid_and_more'),
     ]
 
     operations = [

@@ -4,8 +4,8 @@ from rest_framework.permissions import IsAdminUser
 from rest_framework.views import APIView
 from starlette.status import HTTP_201_CREATED
 
-from app import serializers
-from app.serializers import DoctorSerializer,UserSerializer
+from doctor import serializers
+from doctor.serializers import DoctorSerializer,UserSerializer
 
 from rest_framework import status
 from rest_framework.response import Response
@@ -22,10 +22,10 @@ from rest_framework.response import Response
 
 
 from rest_framework import status
-from app.serializers import DoctorSerializer
+from doctor.serializers import DoctorSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from app.models import Doctor
+from doctor.models import Doctor
 
 class DoctorListCreate(APIView):
 
