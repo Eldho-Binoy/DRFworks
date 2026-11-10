@@ -22,5 +22,6 @@ from rest_framework.views import APIView
 urlpatterns = [
 
     path('register',views.PatientRegister.as_view()),
+    path('appointment',views.PatientAppointmentListCreate.as_view()),
 
 ]

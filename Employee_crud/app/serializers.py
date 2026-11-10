@@ -38,6 +38,6 @@ class EmployeeSerializer(serializers.ModelSerializer):
 
 def Validate(self,data):
     if data['age'] <= 0:
-        raise serializers.ValidationError("Age shoiuld be positive")
+        raise serializers.ValidationError("Age should be positive")
 
     return data
